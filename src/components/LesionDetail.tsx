@@ -39,7 +39,7 @@ export default class LesionDetail extends React.Component<IProps, IState> {
                 <div className="row lesion-done-button">
                     <div className="btn btn-primary btn-action" onClick={this.downloadLesionImage.bind(this, currentLesion.url)}>Download</div>
                     <div className="btn btn-primary btn-action" onClick={this.onOpenModal}>Edit</div>
-                    <div className="btn btn-primary btn-action" onClick={this.methodNotImplemented.bind(this, currentLesion.id)}>Delete</div>
+                    <div className="btn btn-primary btn-action" onClick={this.deleteLesion.bind(this, currentLesion.id)}>Delete</div>
                 </div>
                 <Modal open={open} onClose={this.onCloseModal}>
                     <form>
@@ -71,9 +71,9 @@ export default class LesionDetail extends React.Component<IProps, IState> {
     };
     
     // Generic not implemented placeholder
-    private methodNotImplemented() {
-		alert("Method not implemented")
-	}
+    // private methodNotImplemented() {
+	// 	alert("Method not implemented")
+	// }
 
     // Open lesion image in new tab for download
     private downloadLesionImage(url: any) {
@@ -112,6 +112,24 @@ export default class LesionDetail extends React.Component<IProps, IState> {
                 // Error State
                 alert(response.statusText + " " + url)
             } else {
+                location.reload()
+            }
+        })
+    }
+
+    // Delete a lesion from the database - DELETE
+    private deleteLesion(id: any) {
+        const url = "https://skinsyncapi.azurewebsites.net/api/Lesion/" + id
+    
+        fetch(url, {
+            method: 'DELETE'
+        })
+        .then((response : any) => {
+            if (!response.ok) {
+                // Error Response
+                alert(response.statusText)
+            }
+            else {
                 location.reload()
             }
         })
