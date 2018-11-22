@@ -27,6 +27,8 @@ class App extends React.Component<{}, IState> {
 		this.selectNewLesion = this.selectNewLesion.bind(this)
 		this.fetchLesions = this.fetchLesions.bind(this)
 		this.fetchLesions("")
+		this.handleFileUpload = this.handleFileUpload.bind(this)
+		this.uploadLesion = this.uploadLesion.bind(this)
 	}
 
 	public render() {
@@ -63,10 +65,10 @@ class App extends React.Component<{}, IState> {
 					</div>
 					<div className="form-group">
 						<label>Image</label>
-						<input type="file" onChange={this.methodNotImplemented} className="form-control-file" id="lesion-image-input" />
+						<input type="file" onChange={this.handleFileUpload} className="form-control-file" id="lesion-image-input" />
 					</div>
 
-					<button type="button" className="btn" onClick={this.methodNotImplemented}>Upload</button>
+					<button type="button" className="btn" onClick={this.uploadLesion}>Upload</button>
 				</form>
 			</Modal>
 			<div className="footer-wrapper">
@@ -79,9 +81,9 @@ class App extends React.Component<{}, IState> {
 	}
 
 	// Default not implemented method
-	private methodNotImplemented() {
-		alert("Method not implemented")
-	}
+	// private methodNotImplemented() {
+	// 	alert("Method not implemented")
+	// }
 
 	// Modal open
 	private onOpenModal = () => {
@@ -120,6 +122,48 @@ class App extends React.Component<{}, IState> {
 				lesions: json
 			})
 		});
+	}
+
+	// Post new lesions to API
+
+	private handleFileUpload(fileList: any) {
+		this.setState({
+			uploadFileList: fileList.target.files
+		})
+	}
+
+	private uploadLesion() {
+		const locationInput = document.getElementById("lesion-location-input") as HTMLInputElement
+		const diameterInput = document.getElementById("lesion-diameter-input") as HTMLInputElement
+		const imageFile = this.state.uploadFileList[0]
+		
+		// Don't POST if any field is missing
+		if (locationInput === null || diameterInput === null || imageFile === null) {
+			return;
+		}
+		
+		const locationTag = locationInput.value // Had to rename to locationTag to avoid clash with location.reload after POSTing
+		const diameter = diameterInput.value
+		const url = "https://skinsyncapi.azurewebsites.net/api/Lesion/upload"
+	
+		const formData = new FormData()
+		formData.append("Location", locationTag)
+		formData.append("Diameter", diameter)
+		formData.append("image", imageFile)
+	
+		fetch(url, {
+			body: formData,
+			headers: {'cache-control': 'no-cache'},
+			method: 'POST'
+		})
+		.then((response : any) => {
+			if (!response.ok) {
+				// Error State
+				alert(response.statusText + ' - Check your input data and try again later.')
+			} else {
+				location.reload()
+			}
+		})
 	}
 }
 
