@@ -17,6 +17,8 @@ export default class LesionDetail extends React.Component<IProps, IState> {
             open: false
         }
 
+        this.updateLesion = this.updateLesion.bind(this)
+
     }
 
 	public render() {
@@ -51,7 +53,7 @@ export default class LesionDetail extends React.Component<IProps, IState> {
                             <input type="text" className="form-control" id="lesion-edit-diameter-input" placeholder="Enter Diameter"/>
                             <small className="form-text text-muted">Size of lesion in mm</small>
                         </div>
-                        <button type="button" className="btn" onClick={this.methodNotImplemented}>Save</button>
+                        <button type="button" className="btn" onClick={this.updateLesion}>Save</button>
                     </form>
                 </Modal>
             </div>
@@ -76,5 +78,42 @@ export default class LesionDetail extends React.Component<IProps, IState> {
     // Open lesion image in new tab for download
     private downloadLesionImage(url: any) {
         window.open(url);
+    }
+
+    // Update lesion data (PUT)
+    private updateLesion(){
+        const locationInput = document.getElementById("lesion-edit-location-input") as HTMLInputElement
+        const diameterInput = document.getElementById("lesion-edit-diameter-input") as HTMLInputElement
+    
+        // Don't allow an update if missing location or diameter data
+        if (locationInput === null || diameterInput === null) {
+            return;
+        }
+    
+        const currentLesion = this.props.currentLesion
+        const url = "https://skinsyncapi.azurewebsites.net/api/Lesion/" + currentLesion.id
+        const updatedLocation = locationInput.value
+        const updatedDiameter = diameterInput.value
+        fetch(url, {
+            body: JSON.stringify({
+                "diameter": updatedDiameter,
+                "height": currentLesion.height,
+                "id": currentLesion.id,
+                "location": updatedLocation,
+                "uploaded": currentLesion.uploaded,
+                "url": currentLesion.url,
+                "width": currentLesion.width
+            }),
+            headers: {'cache-control': 'no-cache','Content-Type': 'application/json'},
+            method: 'PUT'
+        })
+        .then((response : any) => {
+            if (!response.ok) {
+                // Error State
+                alert(response.statusText + " " + url)
+            } else {
+                location.reload()
+            }
+        })
     }
 }
