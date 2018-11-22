@@ -1,4 +1,6 @@
+import MediaStreamRecorder from 'msr';
 import * as React from "react";
+
 
 interface IProps {
     lesions: any[],
@@ -10,6 +12,8 @@ export default class LesionList extends React.Component<IProps, {}> {
     constructor(props: any) {
         super(props)   
         this.searchByLocation = this.searchByLocation.bind(this)
+        this.searchLocationByVoice = this.searchLocationByVoice.bind(this)
+        this.postAudio = this.postAudio.bind(this)
     }
 
 	public render() {
@@ -17,6 +21,7 @@ export default class LesionList extends React.Component<IProps, {}> {
 			<div className="container lesion-list-wrapper">
                 <div className="row lesion-list-heading">
                     <div className="input-group">
+                        <div className="btn" onClick={this.searchLocationByVoice}><i className="fa fa-microphone" /></div>
                         <input type="text" id="search-tag-textbox" className="form-control" placeholder="Search by location tag" />
                         <div className="input-group-append">
                             <div className="btn btn-outline-secondary search-button" onClick = {this.searchByLocation}>Search</div>
@@ -69,6 +74,74 @@ export default class LesionList extends React.Component<IProps, {}> {
         }
         const location = textBox.value 
         this.props.searchByLocation(location)  
+    }
+
+    // Search lesion by location tag- voice (accessibility option)
+    private searchLocationByVoice() {
+        
+        // Get media permission (audio)
+        const mediaConstraints = {
+            audio: true
+        };
+
+        const onMediaSuccess = (stream: any) => {
+            const mediaRecorder = new MediaStreamRecorder(stream);
+            mediaRecorder.mimeType = 'audio/wav'; // check this line for audio/wav
+            mediaRecorder.ondataavailable = (blob: any) => {
+                this.postAudio(blob);
+                mediaRecorder.stop()
+            }
+            mediaRecorder.start(3000);
+        }
+    
+        navigator.getUserMedia(mediaConstraints, onMediaSuccess, onMediaError)
+    
+        function onMediaError(e: any) {
+            console.error('media error', e);
+        }
+    }
+
+    private postAudio(blob: any){
+        // Get access token for Microsoft Speach Recognition
+        let accessToken: any;
+        fetch('https://westus.api.cognitive.microsoft.com/sts/v1.0/issueToken', {
+            headers: {
+                'Content-Length': '0',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Ocp-Apim-Subscription-Key': '3498bb34b9154702b825030b85cb6225'
+            },
+            method: 'POST'
+            }).then((response) => {
+                // console.log(response.text())
+                return response.text()
+            }).then((response) => {
+                accessToken = response
+            }).catch((error) => {
+                console.log("Error", error)
+            });
+        
+        // posting audio
+        fetch('https://westus.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=en-AU', {
+            body: blob, // this is a .wav audio file    
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': 'Bearer' + accessToken,
+                'Content-Type': 'audio/wav;codec=audio/pcm; samplerate=16000',
+                'Ocp-Apim-Subscription-Key': 'd6dc25ded9bd40e18c9ae4b2676c5c02'
+            },    
+            method: 'POST'
+            }).then((res) => {
+                return res.json()
+            }).then((res: any) => {
+                // Updating the Search box
+                const textBox = document.getElementById("search-tag-textbox") as HTMLInputElement
+                textBox.value = (res.DisplayText as string).slice(0, -1)
+            }).catch((error) => {
+                console.log("Error", error)
+            });
+        
+        
+
     }
 
 }
