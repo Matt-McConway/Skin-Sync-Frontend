@@ -3,13 +3,13 @@ import * as React from "react";
 interface IProps {
     lesions: any[],
     selectNewLesion: any,
-    searchByTag: any
+    searchByLocation: any
 }
 
 export default class LesionList extends React.Component<IProps, {}> {
     constructor(props: any) {
         super(props)   
-        this.searchByTag = this.searchByTag.bind(this)
+        this.searchByLocation = this.searchByLocation.bind(this)
     }
 
 	public render() {
@@ -19,7 +19,7 @@ export default class LesionList extends React.Component<IProps, {}> {
                     <div className="input-group">
                         <input type="text" id="search-tag-textbox" className="form-control" placeholder="Search by location tag" />
                         <div className="input-group-append">
-                            <div className="btn btn-outline-secondary search-button" onClick = {this.searchByTag}>Search</div>
+                            <div className="btn btn-outline-secondary search-button" onClick = {this.searchByLocation}>Search</div>
                         </div>
                     </div>  
                 </div>
@@ -46,8 +46,8 @@ export default class LesionList extends React.Component<IProps, {}> {
             const children = []
             const lesion = lesionList[i]
             children.push(<td key={"id" + i}>{lesion.id}</td>)
-            children.push(<td key={"name" + i}>{lesion.location}</td>)
-            children.push(<td key={"tags" + i}>{lesion.diameter}</td>)
+            children.push(<td key={"location" + i}>{lesion.location}</td>)
+            children.push(<td key={"diameter" + i}>{lesion.diameter}</td>)
             table.push(<tr key={i+""} id={i+""} onClick= {this.selectRow.bind(this, i)}>{children}</tr>)
         }
         return table
@@ -62,13 +62,13 @@ export default class LesionList extends React.Component<IProps, {}> {
     }
 
     // Search lesion by location tag
-    private searchByTag() {
+    private searchByLocation() {
         const textBox = document.getElementById("search-tag-textbox") as HTMLInputElement
         if (textBox === null) {
             return;
         }
-        const tag = textBox.value 
-        this.props.searchByTag(tag)  
+        const location = textBox.value 
+        this.props.searchByLocation(location)  
     }
 
 }

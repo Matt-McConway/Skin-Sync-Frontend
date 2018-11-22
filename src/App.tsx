@@ -21,8 +21,12 @@ class App extends React.Component<{}, IState> {
 			lesions: [],
 			open: false,
 			uploadFileList: null
-		}     	
+		}
+		
+		// Binding methods     	
 		this.selectNewLesion = this.selectNewLesion.bind(this)
+		this.fetchLesions = this.fetchLesions.bind(this)
+		this.fetchLesions("")
 	}
 
 	public render() {
@@ -41,7 +45,7 @@ class App extends React.Component<{}, IState> {
 						<LesionDetail currentLesion={this.state.currentLesion} />
 					</div>
 					<div className="col-5">
-						<LesionList lesions={this.state.lesions} selectNewLesion={this.selectNewLesion} searchByTag={this.methodNotImplemented}/>
+						<LesionList lesions={this.state.lesions} selectNewLesion={this.selectNewLesion} searchByLocation={this.fetchLesions}/>
 					</div>
 				</div>
 			</div>
@@ -94,6 +98,28 @@ class App extends React.Component<{}, IState> {
 		this.setState({
 			currentLesion: newLesion
 		})
+	}
+
+	// Fetch all lesions from API
+	private fetchLesions(location: any) {
+		let url = "https://skinsyncapi.azurewebsites.net/api/Lesion/"
+		if (location !== "") {
+			url += "lesion?location=" + location
+		}
+		fetch(url, {
+			method: 'GET'
+		})
+		.then(res => res.json())
+		.then(json => {
+			let currentLesion = json[0]
+			if (currentLesion === undefined) {
+				currentLesion = {"id":0, "location":"No lesions in search","url":"","diameter":"","uploaded":"","width":"0","height":"0"}
+			}
+			this.setState({
+				currentLesion,
+				lesions: json
+			})
+		});
 	}
 }
 
