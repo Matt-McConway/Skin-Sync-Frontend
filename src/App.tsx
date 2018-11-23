@@ -1,9 +1,12 @@
 import * as React from 'react';
 import Modal from 'react-responsive-modal';
+import * as Webcam from 'react-webcam';
 import './App.css';
 import LesionDetail from './components/LesionDetail';
 import LesionList from './components/LesionList';
 import Logo from './Logo.png';
+
+
 
 
 interface IState {
@@ -11,15 +14,19 @@ interface IState {
 	lesions: any[],
 	open: boolean,
 	uploadFileList: any,
+	refCamera: any,
+	capture: any
 }
 
 class App extends React.Component<{}, IState> {
 	constructor(props: any) {
         super(props)
         this.state = {
+			capture: null,
 			currentLesion: {"id":0, "location":"Loading ","url":"","diameter":"","uploaded":"","width":"0","height":"0"},
 			lesions: [],
 			open: false,
+			refCamera: React.createRef(),
 			uploadFileList: null
 		}
 		
@@ -29,6 +36,7 @@ class App extends React.Component<{}, IState> {
 		this.fetchLesions("")
 		this.handleFileUpload = this.handleFileUpload.bind(this)
 		this.uploadLesion = this.uploadLesion.bind(this)
+		this.captureImage = this.captureImage.bind(this)
 	}
 
 	public render() {
@@ -65,7 +73,20 @@ class App extends React.Component<{}, IState> {
 					</div>
 					<div className="form-group">
 						<label>Image</label>
+						<br />
+						<Webcam 
+							audio={false}
+							screenshotFormat="image/jpeg"
+							ref={this.state.refCamera}
+							height={240}
+							width={426}
+						/>
+						<br />
+						<button type="button" className="btn" onClick={this.captureImage}>Capture</button>
+						{ this.state.capture ? <a href={this.state.capture} download="lesion.jpeg">Download Captured Image</a>: null }
+						{/* <div className="btn" ><i className="fa fa-camera" /></div> */}
 						<input type="file" onChange={this.handleFileUpload} className="form-control-file" id="lesion-image-input" />
+						
 					</div>
 
 					<button type="button" className="btn" onClick={this.uploadLesion}>Upload</button>
@@ -130,6 +151,7 @@ class App extends React.Component<{}, IState> {
 		this.setState({
 			uploadFileList: fileList.target.files
 		})
+		console.log(this.state.uploadFileList)
 	}
 
 	private uploadLesion() {
@@ -165,6 +187,14 @@ class App extends React.Component<{}, IState> {
 			}
 		})
 	}
+
+	private captureImage(){
+		const image = this.state.refCamera.current.getScreenshot()
+		this.setState({ capture: image})
+		console.log(this.state.capture)
+	}
+
+
 }
 
 export default App;
