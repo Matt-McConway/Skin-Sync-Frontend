@@ -21,7 +21,7 @@ export default class LesionList extends React.Component<IProps, {}> {
 			<div className="container lesion-list-wrapper">
                 <div className="row lesion-list-heading">
                     <div className="input-group">
-                        <div className="btn" onClick={this.searchLocationByVoice}><i className="fa fa-microphone" /></div>
+                        <div className="btn btn-outline-secondary mic-button" onClick={this.searchLocationByVoice}><i className="fa fa-microphone" /></div>
                         <input type="text" id="search-tag-textbox" className="form-control" placeholder="Search by location tag" />
                         <div className="input-group-append">
                             <div className="btn btn-outline-secondary search-button" onClick = {this.searchByLocation}>Search</div>
@@ -43,6 +43,11 @@ export default class LesionList extends React.Component<IProps, {}> {
 	private createTable() {
         const table:any[] = []
         const lesionList = this.props.lesions
+        table.push(<tr>
+            <th>id</th>
+            <th>Location</th>
+            <th>Diameter</th>
+          </tr>)
         if (lesionList == null) {
             return table
         }

@@ -59,6 +59,7 @@ class App extends React.Component<{}, IState> {
 					</div>
 				</div>
 			</div>
+			{/* Start of upload modal */} 
 			<Modal open={open} onClose={this.onCloseModal}>
 				<form>
 					<div className="form-group">
@@ -82,36 +83,30 @@ class App extends React.Component<{}, IState> {
 							width={426}
 						/>
 						<br />
-						<button type="button" className="btn" onClick={this.captureImage}>Capture</button>
+						<button type="button" className="btn btn-primary btn-action" onClick={this.captureImage}>Capture</button>
 						{ this.state.capture ? <a href={this.state.capture} download="lesion.jpeg">Download Captured Image</a>: null }
 						{/* <div className="btn" ><i className="fa fa-camera" /></div> */}
 						<input type="file" onChange={this.handleFileUpload} className="form-control-file" id="lesion-image-input" />
 						
 					</div>
 
-					<button type="button" className="btn" onClick={this.uploadLesion}>Upload</button>
+					<button type="button" className="btn btn-primary btn-action" onClick={this.uploadLesion}>Upload</button>
 				</form>
 			</Modal>
+			{/* End of upload modal */} 
 			<div className="footer-wrapper">
-				{/* <div className="footer"> */}
 					<h6>Created by Matt McConway - 2018</h6>
-				{/* </div> */}
 			</div>
 		</div>
 		);
 	}
 
-	// Default not implemented method
-	// private methodNotImplemented() {
-	// 	alert("Method not implemented")
-	// }
-
-	// Modal open
+	// Upload Modal open
 	private onOpenModal = () => {
 		this.setState({ open: true });
 	  };
 	
-	// Modal close
+	// Upload Modal close
 	private onCloseModal = () => {
 		this.setState({ open: false });
 	};
@@ -145,13 +140,11 @@ class App extends React.Component<{}, IState> {
 		});
 	}
 
-	// Post new lesions to API
-
+	// Post take uploaded files into state
 	private handleFileUpload(fileList: any) {
 		this.setState({
 			uploadFileList: fileList.target.files
 		})
-		console.log(this.state.uploadFileList)
 	}
 
 	private uploadLesion() {

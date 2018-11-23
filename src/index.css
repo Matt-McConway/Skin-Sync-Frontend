@@ -118,6 +118,22 @@ body{
   color: black;
 }
 
+.mic-button {
+  background-color: #CF5C36;
+  border-color: #CF5C36;
+  color: white;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+.mic-button:hover {
+  background-color: #F7C4A5;
+  border-color: #F7C4A5;
+  color: black;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
 
 
 /* Footer */
@@ -142,4 +158,10 @@ body{
 /* Entire app div wrapper */
 .app-wrapper {
   max-height: 100vh !important;
+}
+
+
+th {
+  background-color: #CF5C36;
+  color: white;
 }

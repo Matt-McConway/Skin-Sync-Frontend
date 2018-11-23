@@ -27,10 +27,10 @@ export default class LesionDetail extends React.Component<IProps, IState> {
 		return (
 			<div className="container lesion-wrapper">
                 <div className="row lesion-heading">
-                    <b>{currentLesion.location}</b>&nbsp; {currentLesion.diameter}
+                    <b>Location:&nbsp;</b>{currentLesion.location}&nbsp;&nbsp;&nbsp; <b>Diameter:&nbsp;</b> {currentLesion.diameter}
                 </div>
                 <div className="row lesion-date">
-                    {currentLesion.uploaded}
+                    <b>Date: &nbsp;</b>{currentLesion.uploaded}
                 </div>
                 <div className="row lesion-img-wrapper">
                     <img src={currentLesion.url}/>
