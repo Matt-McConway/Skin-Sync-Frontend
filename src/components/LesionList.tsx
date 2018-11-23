@@ -43,10 +43,10 @@ export default class LesionList extends React.Component<IProps, {}> {
 	private createTable() {
         const table:any[] = []
         const lesionList = this.props.lesions
-        table.push(<tr>
-            <th>id</th>
-            <th>Location</th>
-            <th>Diameter</th>
+        table.push(<tr key="table-header-row">
+            <th key="table-header-id">id</th>
+            <th key="table-header-location">Location</th>
+            <th key="table-header-diameter">Diameter</th>
           </tr>)
         if (lesionList == null) {
             return table
